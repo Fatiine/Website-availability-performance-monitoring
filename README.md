@@ -25,3 +25,11 @@
 * Write a test for the alerting logic
 * Explain how you'd improve on this application design
 
+
+
+## Usage
+
+# Installing packaging
+pip install -r requirements.txt
+
+
