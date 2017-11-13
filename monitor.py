@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 
-from .website import Website
+from website import Website
+from database import create_tables
+import threading
 
 class Monitor():
 
     def __init__(self):
         self.websites = []
 
-
     def add_website(self, website):
-        self.websites.append(website)
+        w = Website(website[0], website[1])
+        self.websites.append(w)
 
 
 
@@ -59,3 +61,39 @@ class Monitor():
                     print("Wrong index, try again")
             elif choice2 == "3":
                 self.menu()
+
+    def getData(self, database_name):
+        # Starting a thread to get data of a website and store it in a database 
+        for website in self.websites:
+            continuous_Check= threading.Timer(website.checkInterval, website.insert_website_check_thread, args=[database_name])
+            continuous_Check.start()
+
+
+    def getStats(self,timeframe, database_name, displayTime):
+        # Starting a thread to get the statististiques of each website in the database
+        for website in self.websites:
+            continuousStats = threading.Timer(displayTime, website.insert_stats_thread, args=[timeframe, database_name])
+            continuousStats.start()
+
+    def run_monitor(self, database_name):
+
+        self.getData(database_name)
+        self.getStats(120, database_name, 10)
+
+        self.getStats(600,database_name, 10)
+        self.getStats(600, database_name, 60)
+
+
+
+
+m = Monitor()
+w = ("http://yahoo.fr", 5)
+w2 = ("http://enpc.fr/", 3)
+w3 = ("http://ecodomemaroc.com/", 4)
+
+m.add_website(w)
+m.add_website(w2)
+m.add_website(w3)
+
+create_tables('monitor')
+m.run_monitor('monitor')
