@@ -81,18 +81,18 @@ class Monitor():
     def getStats(self,timeframe, database_name, displayTime):
         # Starting a thread to get the statististiques of each website in the database
         for website in self.websites:
-            continuousStats = threading.Timer(displayTime, website.get_website_stats, args=[timeframe, database_name,displayTime])
+            continuousStats = threading.Timer(displayTime, website.get_stats, args=[timeframe, database_name])
             continuousStats.start()
 
 
     def run_monitor(self, database_name):
 
         self.getData(database_name)
-        # self.getStats(120, database_name, 10)
 
-        # self.getStats(600,database_name, 10)
-        # self.getStats(600, database_name, 60)
-        # Start a thread dedicated to printing results
+
+        self.getStats(120, database_name, 10)
+        self.getStats(600,database_name, 10)
+        self.getStats(600, database_name, 60)
 
 
 
