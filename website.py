@@ -97,8 +97,6 @@ class Website():
 
     def insert_check_data(self, database_name):
         ''' Inserts the current data into the monitor database '''
-
-
         # Current data
         time_date, availability , status_code , response_time = self.current_data()
 
@@ -120,8 +118,8 @@ class Website():
     #def alerts_check_thread(self, database_name):
 
 
-    def insert_website_check_thread(self, database_name):
-        continousCheck = threading.Timer(self.checkInterval, self.insert_website_check_thread, args=[database_name])
+    def insert_website_check(self, database_name):
+        continousCheck = threading.Timer(self.checkInterval, self.insert_website_check, args=[database_name])
         continousCheck.start()
         ''' Inserts the current data into the monitor database '''
         # Current data
@@ -132,10 +130,10 @@ class Website():
 
 
     def insert_stats_thread(self, timeframe, database_name):
-        stats_thread = threading.Timer(10, self.insert_stats_thread, args=[timeframe,database_name])
-        stats_thread.start()
+        #stats_thread = threading.Timer(10, self.insert_stats_thread, args=[timeframe,database_name])
+        #stats_thread.start()
         #Compute the statistiques of some metrics over a timeframe 
-        print("Stats of the website : ", self.URL, "over ", timeframe/60, "minutes ")
+        #print("Stats of the website : ", self.URL, "over ", timeframe/60, "minutes ")
         
         now = datetime.datetime.now()
         time_frame = datetime.timedelta(0, timeframe)
@@ -147,7 +145,7 @@ class Website():
         
 
         if query_result is None:
-            return 
+            return False, {}
         
         availabilities = Counter([element[2] for element in query_result if element[2] is not None])
         status_code = Counter([element[3] for element in query_result])
@@ -158,9 +156,9 @@ class Website():
         min_RT = min(response_times)
         avg_RT = sum(response_times) / len(response_times)
         time_date = datetime.datetime.now()
-        print("availabilities : ", availabilities)
-        print("availabilities[True] :", availabilities[True])
-        print("availability :", availability)
+        #print("availabilities : ", availabilities)
+        #print("availabilities[True] :", availabilities[True])
+        #print("availability :", availability)
 
         if timeframe == 120:
             if availability < 0.8 :
@@ -186,7 +184,7 @@ class Website():
         # print('Min response time :', min_RT, 'Max response time :', max_RT, 'Average response time: ', avg_RT)
         # print('Status code:', status_code.most_common())
     
-        return
+        return True, {'Availability': availability , 'statusCodes': status_code.most_common(), 'maxRT': max_RT, 'minRT:': min_RT, 'avgRT': avg_RT}
         
 
 
