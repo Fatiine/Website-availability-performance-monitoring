@@ -3,13 +3,21 @@
 from website import Website
 from database import create_tables
 import threading
+import os
+import datetime
 
 class Monitor():
+    '''This is the application class
+    Attributes : 
+        - List of the websites we want to check
+        - Console 
+        '''
 
     def __init__(self):
         self.websites = []
 
     def add_website(self, website):
+        '''Function that adds a website to the monitor list of websites'''
         w = Website(website[0], website[1])
         self.websites.append(w)
 
@@ -63,26 +71,28 @@ class Monitor():
                 self.menu()
 
     def getData(self, database_name):
-        # Starting a thread to get data of a website and store it in a database 
+        # Starting a thread to get data of a website and store it in a database
         for website in self.websites:
-            continuous_Check= threading.Timer(website.checkInterval, website.insert_website_check_thread, args=[database_name])
-            continuous_Check.start()
+            #continuous_Check = threading.Timer(website.checkInterval, website.insert_website_check_thread, args=[database_name])
+            #continuous_Check.start()
+            website.insert_website_check(database_name)
 
 
     def getStats(self,timeframe, database_name, displayTime):
         # Starting a thread to get the statististiques of each website in the database
         for website in self.websites:
-            continuousStats = threading.Timer(displayTime, website.insert_stats_thread, args=[timeframe, database_name])
+            continuousStats = threading.Timer(displayTime, website.get_website_stats, args=[timeframe, database_name,displayTime])
             continuousStats.start()
+
 
     def run_monitor(self, database_name):
 
         self.getData(database_name)
-        self.getStats(120, database_name, 10)
+        # self.getStats(120, database_name, 10)
 
-        self.getStats(600,database_name, 10)
-        self.getStats(600, database_name, 60)
-
+        # self.getStats(600,database_name, 10)
+        # self.getStats(600, database_name, 60)
+        # Start a thread dedicated to printing results
 
 
 
