@@ -95,17 +95,17 @@ class Website():
         # print("availabilities[True] :", availabilities[True])
         # print("availability :", availability)
 
-        if timeframe == 120:
+        if timeframe == 120: # 2 minutes
             if availability < 0.8:
                 self.isDown = True
-                messageType = "recovery"
+                messageType = "alert"
 
                 values = (self.URL, time_date, availability, self.isDown, messageType)
                 insert_values(database_name, "alerts_table", values)
 
             if availability >= 0.8 and self.isDown == True:
                 self.isDown = False
-                messageType = "alert"
+                messageType = "recovery"
 
                 values = (self.URL, time_date, availability, self.isDown, messageType)
                 insert_values(database_name, "alerts_table", values)
