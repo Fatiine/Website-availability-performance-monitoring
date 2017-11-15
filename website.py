@@ -80,7 +80,8 @@ class Website():
         query_result = select_values(database_name, "monitoring_table", selectData)
 
         if query_result is None:
-            return False, {}
+            return False, {} # "No data available"
+            '''False, {}'''
 
         availabilities = Counter([element[2] for element in query_result if element[2] is not None])
         status_code = Counter([element[3] for element in query_result])
@@ -113,16 +114,15 @@ class Website():
         values = (self.URL, time_date, timeframe, availability, str(status_code.most_common()), max_RT, min_RT, avg_RT)
         insert_values(database_name, "stats_table", values)
 
-        # print('Availability : ',availability * 100,'%')
-        # print('Min response time :', min_RT, 'Max response time :', max_RT, 'Average response time: ', avg_RT)
-        # print('Status code:', status_code.most_common())
+
         printStr += '\n\033[4;36m Past {} minutes:\033[0m'.format(timeframe/60) + \
     '\n\tMax/Avg/Min response time: {:.4f}/{:.4f}/{:.4f} s'.format(max_RT, avg_RT, min_RT) + \
     '\n\tResponse counts: {}'.format(status_code.most_common())+ '\n\tAvailability: {} %'.format(availability*100)
-        #print('Availability', availability,  '\n statusCodes': status_code.most_common(), 'maxRT': max_RT, 'minRT:': min_RT, 'avgRT': avg_RT)
+
         print(printStr)
-        return True, {'Availability': availability, 'statusCodes': status_code.most_common(), 'maxRT': max_RT,
-                      'minRT:': min_RT, 'avgRT': avg_RT}
+        return True, printStr
+        '''{'Availability': availability, 'statusCodes': status_code.most_common(), 'maxRT': max_RT,
+                      'minRT:': min_RT, 'avgRT': avg_RT}'''
 
     def checkAlerts(self, database_name):
         alert_thread = threading.Timer(120,self.checkAlerts,args=[database_name])
@@ -141,83 +141,3 @@ class Website():
                     self.alertStr += '\n\033[4;93m [RECOVERY MESSAGE !!] \033[0m '+ 'The website {} is RECOVERED'.format(self.URL) + 'at {}'.format(element['timedate']+'\t Availability : {} %'.format(element['Availability']*100))
                 print(self.alertStr)
             return True, self.alertStr
-    '''def insert_check_data(self, database_name):
-        #Inserts the current data into the monitor database
-        # Current data
-        time_date, availability , status_code , response_time = self.current_data()
-
-        # Database and cursor connection
-        connection = sqlite3.connect(database_name)
-        cursor = connection.cursor()
-
-
-        sql_command = "INSERT INTO monitoring_table VALUES ( ? , ?, ?, ?, ?)"
-        cursor.execute(sql_command, (self.URL, time_date, availability, status_code, response_time))
-
-        # Save the changes before closing
-        connection.commit()
-        connection.close()
-        return'''
-
-
-    '''def count_stats(self, timeframe, database_name):
-        #Compute the statistiques of some metrics over a timeframe 
-
-        # Database and cursor connection
-        connection = sqlite3.connect(database_name)
-        cursor = connection.cursor()
-
-        now = datetime.datetime.now()
-        time_frame = datetime.timedelta(0, timeframe) # 2 min
-        t = now - time_frame
-        
-        sql_command = "SELECT * FROM monitoring_table WHERE URL = ? AND timedate >= ?"
-
-        cursor.execute(sql_command,( self.URL, t))
-        query_result = cursor.fetchall()
-        connection.close()
-
-        if query_result is None:
-            return {}
-        else:
-            availabilities = Counter(element[2] for element in query_result)
-            status_code = Counter(element[3] for element in query_result)
-            response_times = Counter(element[4] for element in query_result)
-
-            availability = sum(availabilities) / len(availabilities)
-            max_RT = max(response_times)
-            min_RT = min(response_times)
-            avg_RT = sum(response_times) / len(response_times)
-
-        print('Availability : ',availability * 100,'%')
-        print('Min response time :', min_RT, 'Max response time :', max_RT, 'Average response time: ', avg_RT)
-        print('Status code:', status_code.most_common())
-        return'''
-
-
-    ######################################## Create the website monitor table and intert methods #######################################
-    def database_connection(self, database_name):
-        connection = sqlite3.connect(database_name)
-        cursor = connection.cursor()
-        return
-
-
-
-    ############################################## End Database methods ##########################################
-
-    #def alerts_check_thread(self, database_name):
-
-
-
-
-
-
-        
-
-
-'''w = Website("http://google.com", 3)
-create_tables('test')
-w.insert_website_check_thread('test')
-w.insert_stats_thread(120,'test')
-w.insert_stats_thread(600,'test')'''
-
