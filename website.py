@@ -124,6 +124,23 @@ class Website():
         return True, {'Availability': availability, 'statusCodes': status_code.most_common(), 'maxRT': max_RT,
                       'minRT:': min_RT, 'avgRT': avg_RT}
 
+    def checkAlerts(self, database_name):
+        alert_thread = threading.Timer(120,self.checkAlerts,args=[database_name])
+        alert_thread.start()
+        selectData = (self.URL)
+        query_result = select_values(database_name, "alerts_table", selectData)
+
+        if query_result is None:
+            return False, ''
+        else:
+            self.alertStr = ""
+            for element in query_result:
+                if element['message'] == 'alert':
+                    self.alertStr += '\n\033[4;93m [ALERT MESSAGE !!] \033[0m '+ 'The website {} is DOWN'.format(self.URL) + 'at {}'.format(element['timedate']+'\t Availability : {} %'.format(element['Availability']*100))
+                if element['message'] == 'recovery':
+                    self.alertStr += '\n\033[4;93m [RECOVERY MESSAGE !!] \033[0m '+ 'The website {} is RECOVERED'.format(self.URL) + 'at {}'.format(element['timedate']+'\t Availability : {} %'.format(element['Availability']*100))
+                print(self.alertStr)
+            return True, self.alertStr
     '''def insert_check_data(self, database_name):
         #Inserts the current data into the monitor database
         # Current data
