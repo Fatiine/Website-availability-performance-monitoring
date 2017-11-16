@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import os
 import requests
 import datetime
 import time
@@ -64,9 +64,10 @@ class Website():
 
         insert_values(database_name, "monitoring_table", values)
 
-    def get_stats(self, timeframe, database_name):
-        stats_thread = threading.Timer(10, self.get_stats, args=[timeframe,database_name])
+    def get_stats(self, timeframe, database_name, stats_display_time):
+        stats_thread = threading.Timer(stats_display_time, self.get_stats, args=[timeframe,database_name, stats_display_time])
         stats_thread.start()
+        os.system('clear')
         # Compute the statistiques of some metrics over a timeframe
         # print("Stats of the website : ", self.URL, "over ", timeframe/60, "minutes ")
         printStr = '\n\033[1;30m ####### Statistiques of the website {} ########\033[0m'.format(self.URL)
@@ -80,6 +81,7 @@ class Website():
         query_result = select_values(database_name, "monitoring_table", selectData)
 
         if query_result is None:
+            printStr += "No data available"
             return False, {} # "No data available"
             '''False, {}'''
 
@@ -125,19 +127,18 @@ class Website():
                       'minRT:': min_RT, 'avgRT': avg_RT}'''
 
     def checkAlerts(self, database_name):
-        alert_thread = threading.Timer(120,self.checkAlerts,args=[database_name])
+        alert_thread = threading.Timer(10 ,self.checkAlerts,args=[database_name])
         alert_thread.start()
-        selectData = (self.URL)
-        query_result = select_values(database_name, "alerts_table", selectData)
+        query_result = select_values(database_name, "alerts_table", (self.URL,))
 
         if query_result is None:
             return False, ''
         else:
             self.alertStr = ""
             for element in query_result:
-                if element['message'] == 'alert':
-                    self.alertStr += '\n\033[4;93m [ALERT MESSAGE !!] \033[0m '+ 'The website {} is DOWN'.format(self.URL) + 'at {}'.format(element['timedate']+'\t Availability : {} %'.format(element['Availability']*100))
-                if element['message'] == 'recovery':
-                    self.alertStr += '\n\033[4;93m [RECOVERY MESSAGE !!] \033[0m '+ 'The website {} is RECOVERED'.format(self.URL) + 'at {}'.format(element['timedate']+'\t Availability : {} %'.format(element['Availability']*100))
+                if element[4] == 'alert':
+                    self.alertStr += '\n\033[4;93m [ALERT MESSAGE !!] \033[0m '+ 'The website {} is DOWN '.format(self.URL) + ' at {}'.format(element[1]+'\t Availability : {} %'.format(element[2]*100))
+                elif element[4] == 'recovery':
+                    self.alertStr += '\n\033[4;93m [RECOVERY MESSAGE !!] \033[0m '+ 'The website {} is RECOVERED '.format(self.URL) + ' at {}'.format(element[1]+'\t Availability : {} %'.format(element[2]*100))
                 print(self.alertStr)
             return True, self.alertStr
