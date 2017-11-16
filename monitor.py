@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 from website import Website
 from database import create_tables
 import threading
+import curses
 import os
 import datetime
 
@@ -18,7 +20,6 @@ class Monitor():
 
     def add_website(self, website):
         '''Function that adds a website to the monitor list of websites'''
-        w = Website(website[0], website[1])
         self.websites.append(w)
 
 
@@ -73,37 +74,41 @@ class Monitor():
     def getData(self, database_name):
         # Starting a thread to get data of a website and store it in a database
         for website in self.websites:
-            #continuous_Check = threading.Timer(website.checkInterval, website.insert_website_check_thread, args=[database_name])
-            #continuous_Check.start()
             website.insert_website_check(database_name)
 
 
     def getStats(self,timeframe, database_name, displayTime):
-        # Starting a thread to get the statististiques of each website in the database
         for website in self.websites:
-            continuousStats = threading.Timer(displayTime, website.get_stats, args=[timeframe, database_name])
-            continuousStats.start()
+            Stats = threading.Timer(displayTime, website.get_stats, args=[timeframe, database_name, displayTime])
+            Stats.start()
 
+
+
+    def getAlerts(self,database_name, ):
+        for website in self.websites:
+            Alerts = threading.Timer(10, website.checkAlerts, args=[database_name])
+            Alerts.start()
 
     def run_monitor(self, database_name):
-
         self.getData(database_name)
-
-
         self.getStats(120, database_name, 10)
         self.getStats(600,database_name, 10)
-        self.getStats(600, database_name, 60)
+
+        self.getStats(3600, database_name, 60)
+        self.getAlerts(database_name)
 
 
 
 m = Monitor()
-w = ("http://yahoo.fr", 5)
-w2 = ("http://enpc.fr/", 3)
-w3 = ("http://ecodomemaroc.com/", 4)
+w = Website("http://yahoo.fr", 2)
+w2 = Website("http://enpc.fr/", 3)
+w3 = Website("http://ecodomemroc.com/", 4)
 
 m.add_website(w)
-m.add_website(w2)
-m.add_website(w3)
 
-create_tables('monitor')
-m.run_monitor('monitor')
+
+create_tables('monitor.db')
+m.run_monitor('monitor.db')
+
+
+
