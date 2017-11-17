@@ -16,7 +16,7 @@ class Website():
     - checkInterval of the website
     In this class we check the availability of a website 
     and compute the statistiques of its most important metrics '''
- 
+
     def __init__(self, Url, checkInterval):
         self.URL = Url
         self.checkInterval = checkInterval
@@ -31,16 +31,16 @@ class Website():
                 #print("The website : ", self.URL, "is UP")
                 return True, response
             else :
-                print("The website : ", self.URL, "is DOWN")
+                #print("The website : ", self.URL, "is DOWN")
                 return False, response
 
         # Exceptions
         except Exception as e:
-            print(' Error !!')
+            #print(' Error !!')
             return False, None
 
     def current_data(self):
-        # Gets the website data at current time 
+        # Gets the website data at current time
         current_datetime = datetime.datetime.now()  #.strftime("%Y-%m-%d %H:%M:%S")
         availability, response = self.checkAvailability()
 
