@@ -5,29 +5,15 @@ from monitor import Monitor
 from database import create_tables
 import time
 from termcolor import colored
+import threading
 
 
+def displayConsole(displayTime,hourCheck, monitor):
 
+    line = monitor.statsPrinter('monitor.db', displayTime, hourCheck)
+    line2 = monitor.alertsPrinter('monitor.db', displayTime)
 
-
-def draw_menu():
-    # Test Monitor
-    m = Monitor()
-    w = Website("http://yahoo.fr", 2)
-    w2 = Website("http://enpc.fr/", 3)
-    w3 = Website("http://ecodomemroc.com/", 4)
-
-    m.add_website(w)
-    m.add_website(w2)
-
-    create_tables('monitor.db')
-    m.run_monitor('monitor.db')
-
-    line = m.statsPrinter('monitor.db', 10, 5)
-    line2 = m.alertsPrinter('monitor.db', 10)
     k = 0
-    cursor_x = 0
-    cursor_y = 0
 
     # Clear and refresh the screen
     stdscr = curses.initscr()
@@ -39,23 +25,24 @@ def draw_menu():
     curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
-    curses.curs_set(0)
-    # Loop where k is the last character pressed
+    # curses.curs_set(0)
+
     while (k != ord('q')):
         # Declaration of strings
-        statusbarstr = "Press 'q' to exit | STATUS BAR "
+        statusbarstr = "Press 'q' to exit  "
 
         '''Draw borders of the different columns'''
         height, width = stdscr.getmaxyx()
         stdscr.border()
-        stdscr.vline(1, 3 * height // 4, '|', width - 2)
-        stdscr.vline(1, height // 4, '|', width - 2)
+        # stdscr.vline(1, 3 * height // 4, '|', width - 2)
+        # stdscr.vline(1, height // 4, '|', width - 2)
         stdscr.refresh()
 
         '''Initialize the Statistics column'''
-        stats_column = curses.newwin(height - 2, 3 * width // 4, 1,
+        stats_column = curses.newwin(height - 2, width // 2, 1,
                                      1)
         _, a_x = stats_column.getmaxyx()
+        stats_column.scrollok(True)
         stats_column.attron(curses.color_pair(1))
         stats_column.attron(curses.A_BOLD)
         stats_column.addstr(0, a_x // 2 - 2, "Statistiques")
@@ -68,9 +55,10 @@ def draw_menu():
         stats_column.noutrefresh()
 
         '''Initialize the Alerts column'''
-        alert_column = curses.newwin(height - 2, width // 4, 1,
-                                     3 * width // 4)
+        alert_column = curses.newwin(height - 2, width // 2, 1,
+                                     width // 2)
         _, s_x = alert_column.getmaxyx()
+        alert_column.scrollok(True)
         alert_column.attron(curses.color_pair(1))
         alert_column.attron(curses.A_BOLD)
         alert_column.addstr(0, s_x // 2 - 5, "Alerts")
@@ -113,14 +101,99 @@ def draw_menu():
         stdscr.refresh()
         # Wait for next input
         k = stdscr.getch()
+        return k
 
-def draw_menu_loop():
-    while True:
-        draw_menu()
-        curses.napms(10000)
+
+def menu(monitor):
+    os.system('clear')
+    choice = '0'
+    while choice == '0':
+        print("\033[95m Welcome to the Website availability & performance monitoring console application \033[0m")
+        print("1 - Enter the website adresses to check and their check intervals")
+        print("2 - Run the test")
+        print("3 - Run the application")
+
+        choice = input("\t\tPlease make a choice: ")
+
+        if choice == "1":
+            sub_menu1(monitor)
+
+        elif choice == "2":
+            print("Run the test")
+
+        elif choice == "3":
+            break
+
+        else:
+            print("I don't understand your choice.")
+            menu(monitor)
+        return
+
+def sub_menu1(monitor):
+    os.system('clear')
+    choice = '0'
+    while choice == '0':
+        print("Here is the list of websites to check : \n ")
+        for website in monitor.websites:
+            print(monitor.websites.index(website) + 1, ' - ', website.URL, '\n')
+        print("Would you like to : \n")
+        print("\t 1 - Add a website to the list ")
+        print("\t 2 - Delete a website from the list")
+        print("\t 3 - Run the application")
+        choice2 = input("\t\tPlease make a choice: ")
+
+        if choice2 == "1":
+            os.system('clear')
+            URL = input("Set the website URL: ")
+            CheckInterval = int(input("Set The website check interval : "))
+            website = Website(URL, CheckInterval)
+            monitor.websites.append(website)
+        elif choice2 == "2":
+            os.system('clear')
+            index = input("Enter the index of the website you want to delete from the list: ")
+            if (0 < int(index) < len(monitor.websites) + 1):
+                monitor.websites.remove(monitor.websites[int(index) - 1])
+            else:
+                print("\033[93m Wrong index, try again \033[0m")
+        elif choice2 == "3":
+            # monitor.run_monitor('monitor.db')
+            break
+            # display = Display(monitor)
+            # os.system('clear')
+            # run_application(display)
+
+
+
+def display_loop(monitor):
+    
+    update = threading.Timer(10, display_loop,args=[monitor])
+    update.start()
+    k = displayConsole(10,monitor.hourlyDisplay,monitor)
+    monitor.hourlyDisplay += 1
+    return k
+
+
 def main():
-    curses.wrapper(draw_menu_loop())
+    k = 0
+    monitor = Monitor()
+    menu(monitor)
+    monitor.run_monitor('monitor.db')
+    print("First display will appear in 10 seconds...")
+    time.sleep(10)
+    while k != 'q':
+        try:
+            k = display_loop(monitor)
+        except KeyboardInterrupt:
+            print("Exiting...")
+            break
+
+    menu(monitor)
+
+def main2():
+    curses.wrapper(main())
 
 
 if __name__ == "__main__":
-    main()
+    main2()
+
+        
