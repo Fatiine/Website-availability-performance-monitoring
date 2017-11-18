@@ -62,7 +62,7 @@ def select_values(database_name, table_name, selectData):
   cursor = connection.cursor()
 
   if table_name == "monitoring_table":
-      sql_command = "SELECT * FROM monitoring_table WHERE URL = ? AND timedate >= ?"
+      sql_command = "SELECT availability, status_code, response_time FROM monitoring_table WHERE URL = ? AND timedate >= ?"
       cursor.execute(sql_command, selectData)
   elif table_name == "alerts_table":
       sql_command = "SELECT * FROM alerts_table WHERE URL = ?"
