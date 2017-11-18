@@ -36,53 +36,52 @@ def create_tables(database_name):
 
 def insert_values(database_name, table_name, val):
   '''Inserts the values : "val" into the table "table_name" in the database "database_name" '''
-    
-    # Database and cursor connection
-    connection = sqlite3.connect(database_name, timeout=10)
-    cursor = connection.cursor()
+  
+  # Database and cursor connection
+  connection = sqlite3.connect(database_name, timeout=10)
+  cursor = connection.cursor()
 
-    if table_name == "monitoring_table":
-        sql_command = "INSERT INTO monitoring_table VALUES ( ?, ?, ?, ?, ?)"
+  if table_name == "monitoring_table":
+      sql_command = "INSERT INTO monitoring_table VALUES ( ?, ?, ?, ?, ?)"
 
-    elif table_name == "alerts_table":
-        sql_command = "INSERT INTO alerts_table VALUES (? , ? , ? , ?, ?)"
-    
-    cursor.execute(sql_command, val)
+  elif table_name == "alerts_table":
+      sql_command = "INSERT INTO alerts_table VALUES (? , ? , ? , ?, ?)"
+
+  cursor.execute(sql_command, val)
 
 
-    # Save the changes before closing
-    connection.commit()
-    connection.close()
+  # Save the changes before closing
+  connection.commit()
+  connection.close()
 
 
 def select_values(database_name, table_name, selectData):
   ''' Gets the values that verify the "selectData" from the table "table_name" in the database "database_name" '''
     # Database and cursor connection
-    connection = sqlite3.connect(database_name, timeout=10)
-    cursor = connection.cursor()
+  connection = sqlite3.connect(database_name, timeout=10)
+  cursor = connection.cursor()
 
-    if table_name == "monitoring_table":
-        sql_command = "SELECT * FROM monitoring_table WHERE URL = ? AND timedate >= ?"
-        cursor.execute(sql_command, selectData)
-    elif table_name == "alerts_table":
-        sql_command = "SELECT * FROM alerts_table WHERE URL = ?"
-        cursor.execute(sql_command, selectData)
+  if table_name == "monitoring_table":
+      sql_command = "SELECT * FROM monitoring_table WHERE URL = ? AND timedate >= ?"
+      cursor.execute(sql_command, selectData)
+  elif table_name == "alerts_table":
+      sql_command = "SELECT * FROM alerts_table WHERE URL = ?"
+      cursor.execute(sql_command, selectData)
 
-    return cursor.fetchall()
+  return cursor.fetchall()
 
 def drop_tables(database_name):
-    '''Drops the database tables alerts_table and monitoring_tables '''
+  '''Drops the database tables alerts_table and monitoring_tables '''
+  # Database and cursor connection
+  connection = sqlite3.connect(database_name, timeout=10)
+  cursor = connection.cursor()
 
-    # Database and cursor connection
-    connection = sqlite3.connect(database_name, timeout=10)
-    cursor = connection.cursor()
+  # Drop the table monitoring_table
+  cursor.execute("DROP TABLE IF EXISTS monitoring_table")
 
-    # Drop the table monitoring_table
-    cursor.execute("DROP TABLE IF EXISTS monitoring_table")
+  # Drop the table alerts_table
+  cursor.execute("DROP TABLE IF EXISTS alerts_table")
 
-    # Drop the table alerts_table
-    cursor.execute("DROP TABLE IF EXISTS alerts_table")
-
-    # Save changes before closing
-    connection.commit()
-    connection.close()
+  # Save changes before closing
+  connection.commit()
+  connection.close()
