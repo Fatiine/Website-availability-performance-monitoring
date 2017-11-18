@@ -2,118 +2,48 @@
 # -*- coding: utf-8 -*-
 
 from website import Website
-from database import create_tables
-import threading
-import curses
-import os
-import datetime
-import sys
-import select
+from database import create_tables, drop_tables
 
 class Monitor():
     '''This is the application class
     Attributes : 
-        - List of the websites we want to check
-        - Console 
+        - websites : List of the websites we want to check
+        - hourlyDisplay (int) : that attribute indicates when we should display the stats of one hour
+                            when it's a multiple of 6 we show the stats of last hour, otherwise we show the stats of last 2 and 10 minutes
+        - alertHist (str) : Attribute where we save the history of all alert and recovery messages
         '''
     def __init__(self):
         self.websites = []
+        self.hourlyDisplay = 1 # that attribute indicates when we should display the stats of one hour
+                            # when it's a multiple of 6 we show the stats of last hour, otherwise we show the stats of last 2 and 10 minutes
+        self.alertsHist = ""  # Attribute where we save the history of all alert and recovery messages
 
     def add_website(self, website):
         '''Function that adds a website to the monitor list of websites'''
         self.websites.append(website)
 
-    def menu(self):
-        choice = '0'
-        while choice == '0':
-            print("Main Choice: Choose 1 of 3 choices")
-            print("1 - Enter the website adresses to check and their check intervals")
-            print("2 - Run the test")
-            print("3 - Run the application")
-
-            choice = input("Please make a choice: ")
-
-            if choice == "1":
-                self.sub_menu1()
-
-            elif choice == "2":
-                print("Do Something 2")
-            elif choice == "3":
-                self.run_application()
-            else:
-                print("I don't understand your choice.")
-            return
-
-    def sub_menu1(self):
-        choice = '0'
-        while choice == '0':
-            print("Here is the list of websites to check : \n ")
-            for website in self.websites:
-                print(self.websites.index(website) + 1, ' - ', website.URL, '\n')
-            print("Would you like to : \n")
-            print("1 - Add another website ")
-            print("2 - Delete a website")
-            print("3 - Go back to the menu")
-            choice2 = input("Please make a choice: ")
-
-            if choice2 == "1":
-                URL = input("Set the website URL: ")
-                CheckInterval = int(input("Set The website check interval : "))
-                website = Website(URL, CheckInterval)
-                self.websites.append(website)
-            elif choice2 == "2":
-                index = input("Enter the index of the website you want to delete : ")
-                if (0 < int(index) < len(self.websites) + 1):
-                    self.websites.remove(self.websites[int(index) - 1])
-                else:
-                    print("Wrong index, try again")
-            elif choice2 == "3":
-                self.menu()
 
     def getData(self, database_name):
-        # Starting a thread to get data of a website and store it in a database
+        ''' Starting the threads to get data of a website and store it in a database'''
         for website in self.websites:
             website.insert_website_check(database_name)
 
-
-    # def getStats(self, database_name, displayTime):
-    #     Stats = threading.Timer(displayTime, self.getStats, args=[database_name, displayTime])
-    #     Stats.start()
-    #     for website in self.websites:
-    #         printStr = '\n\033[4;93m ####### Statistiques of the website {} ########\033[0m'.format(website.URL)
-    #         website.get_stats(120,database_name,printStr)
-    #         website.get_stats(600,database_name, printStr)
-    # def getStats(self,timeframe, database_name, displayTime):
-    #     for website in self.websites:
-    #         Stats = threading.Timer(displayTime, website.get_stats, args=[timeframe, database_name, displayTime])
-    #         Stats.start()
-        
-    def getStats(self,database_name,displayTime):
-        # os.system('clear')
-        if displayTime == 10:
-            for website in self.websites:
-                printStr = '\n\n ######### Statistiques of the website {} #########\033[0m'.format(website.URL)
-                printStr2 = website.get_stats(120,database_name, displayTime, printStr)
-                website.get_stats(600,database_name, displayTime, printStr2)
-        if displayTime == 60:
-            for website in self.websites:
-                printStr = '\n\n ######### Statistiques of the website {} #########\n\n'.format(website.URL)
-                website.get_stats(3600,database_name, displayTime, printStr)
-        return printStr
-
     def statsPrinter(self, database_name, displayInterval, nextHourDisplay):
-        if nextHourDisplay == 0:
-            stats = threading.Timer(displayInterval, self.statsPrinter, args=[database_name, displayInterval, 5])
+        ''' Saves on a string statistics that would be sent to the displayer
+            Every 10 seconds we send the statistics of the last 2 minutes and the last 10 minutes
+            And every 1 minutes we send the statistics of the last hour  
+            So we send 5 times the stats of 2 and 10 minutes, and on the sixth time we send the stats of one hour '''
+        
+        if nextHourDisplay%6 == 0:
             hourDisplay = True
         else:
-            stats = threading.Timer(displayInterval, self.statsPrinter,
-                                    args=[database_name, displayInterval, nextHourDisplay - 1])
             hourDisplay = False
-        stats.start()
 
         printStr = ""
         for website in self.websites:
+
             printStr += '\n\n ######### Statistiques of the website {} #########'.format(website.URL)
+
             stats2m_bool, stats2m_data = website.get_stats(120, database_name)  #  Statistiques of past 2 minutes
             stats10m_bool, stats10m_data = website.get_stats(600, database_name)  #  Statistiques of past 10 minutes
             stats60m_bool, stats60m_data = website.get_stats(3600, database_name)  #  Statistiques of past hour
@@ -124,55 +54,21 @@ class Monitor():
                 printStr += stats10m_data
             if stats60m_bool and hourDisplay:
                 printStr += stats60m_data
-            if not (stats2m_bool and stats10m_bool and not (stats60m_bool or stats60m_bool)):
-                printStr += "No data available"
+            if not (stats2m_bool and stats10m_bool and (not hourDisplay or stats60m_bool)):
+                printStr += "\nNo data available !! "
 
         return printStr
 
-    def getStatsPrinter(self, database_name, displayInterval, nextHourDisplay):
-        stats = threading.Timer(10, self.statsPrinter, args=[database_name, displayInterval, nextHourDisplay])
-        stats.start()
-
     def alertsPrinter(self, database_name, displayTime):
-        self.alertsHist = ""
-        #alerts = threading.Timer(10, self.alertsPrinter, args=[database_name, displayTime])
-        #alerts.start()
+        ''' Saves on the attribute "self.alertsHist" all the history of alert and recovery messages of all the websites on the monitor list '''
         for website in self.websites:
             self.alertsHist += website.checkAlerts(database_name)
         return self.alertsHist
 
-    def getStatsThread(self,displayTime, database_name):
-        statsRes = threading.Timer(displayTime,self.getStats, args=[database_name,displayTime])
-        statsRes.start()
-
-    def getAlerts(self,database_name):
-        for website in self.websites:
-            Alerts = threading.Timer(10, website.checkAlerts, args=[database_name])
-            Alerts.start()
 
     def run_monitor(self, database_name):
-        # TO DO: drop tables on the database 'monitor.db' before starting to write data on it
-        # Begins by creating a database with 2 tables, monitoring_table and alerts_table
+        '''Drops the tables of the database "database_name" and creates new tables
+        Starts saving data of each website of the monitor websites list over their appropriate checkInterval'''
+        drop_tables('monitor.db')
         create_tables('monitor.db')
         self.getData('monitor.db')
-
-
-
-
-
-
-
-# m = Monitor()
-# w = Website("http://yahoo.fr", 2)
-# w2 = Website("http://enpc.fr/", 3)
-# w3 = Website("http://ecodomemroc.com/", 4)
-
-# m.add_website(w)
-# m.add_website(w2)
-
-# create_tables('monitor.db')
-# m.getData('monitor.db')
-# m.run_monitor('monitor.db')
-
-
-
