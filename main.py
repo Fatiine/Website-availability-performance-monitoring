@@ -15,6 +15,7 @@ def displayConsole(displayTime,hourlyCheck, monitor):
 
     line = monitor.statsPrinter('monitor.db', displayTime, hourlyCheck) # Data we'll display on the column "Statistiques"
     line2 = monitor.alertsPrinter('monitor.db', displayTime) # Data we'll display on the column "Alerts"
+    monitor.alertsHist = "" 
 
     monitor.hourlyDisplay += 1
     k = 0
