@@ -12,9 +12,10 @@ import re
 
 
 class Website():
-    ''' This class has two attributes : 
-    - URL of the website
-    - checkInterval of the website
+    ''' This class has three attributes : 
+        - URL (str) : url of the website
+        - checkInterval(int): Check Interval of the website
+        - isDown (bool): Indicates if the website is down or not
     In this class we check the availability of a website 
     and compute the statistiques of its most important metrics '''
 
@@ -41,6 +42,7 @@ class Website():
                 return True, response
             else :
                 #print("The website : ", self.URL, "is DOWN")
+                # self.isDown = True
                 return False, response
 
         # Exceptions
@@ -92,9 +94,9 @@ class Website():
             return False, "No data available"
 
         # if the selection result is not null, we compute the statistiques of the element we select
-        availabilities = Counter([element[2] for element in select_result if element[2] is not None])
-        status_code = Counter([element[3] for element in select_result])
-        response_times = [element[4] for element in select_result if element[4] is not None]
+        availabilities = Counter([element[0] for element in select_result if element[0] is not None])
+        status_code = Counter([element[1] for element in select_result])
+        response_times = [element[2] for element in select_result if element[2] is not None]
 
         availability = availabilities[True] / sum(availabilities.values())
         max_RT = max(response_times , default=float('inf'))
@@ -113,36 +115,31 @@ class Website():
                 self.isDown = True
                 messageType = "alert"
 
-                values = (self.URL, time_date, availability, self.isDown, messageType)
+                values = (self.URL, time_date.strftime("%Y-%m-%d %H:%M:%S"), availability, self.isDown, messageType)
                 insert_values(database_name, "alerts_table", values)
 
                 # Saving alert message on "alertStr"
-                alertStr = '\n[ALERT MESSAGE !!] '+ 'The website {} is DOWN '.format(self.URL) + ' at {}'.format(time_date)+'\t Availability : {} %'.format(availability*100)
+                alertStr = '\n[ALERT MESSAGE !!] '+ 'The website {} is DOWN '.format(self.URL) + ' at {}'.format(time_date.strftime("%Y-%m-%d %H:%M:%S"))+'\t Availability : {:.2f} %'.format(availability*100)
 
-            elif availability >= 0.8 and self.isDown == True:
+            if availability >= 0.8 and self.isDown == True:
             # Once the availability is >= 0.8, we save on our database a recovery message
                 self.isDown = False
                 messageType = "recovery"
 
-                values = (self.URL, time_date, availability, self.isDown, messageType)
+                values = (self.URL, time_date.strftime("%Y-%m-%d %H:%M:%S"), availability, self.isDown, messageType)
                 insert_values(database_name, "alerts_table", values)
 
-                alertStr = '\n[RECOVERY MESSAGE !!] ' + 'The website {} is RECOVERED '.format(self.URL) + ' at {}'.format(time_date) + '\t Availability : {} %'.format(availability * 100)
-
-        values = (self.URL, time_date, timeframe, availability, str(status_code.most_common()), max_RT, min_RT, avg_RT)
-        insert_values(database_name, "stats_table", values)
+                alertStr = '\n[RECOVERY MESSAGE !!] ' + 'The website {} is RECOVERED '.format(self.URL) + ' at {}'.format(time_date.strftime("%Y-%m-%d %H:%M:%S")) + '\t Availability : {:.2f} %'.format(availability * 100)
 
 
         printStr = '\n Past {} minutes:'.format(timeframe/60) + \
     '\n\tMax/Avg/Min response time: {:.4f}/{:.4f}/{:.4f} s'.format(max_RT, avg_RT, min_RT) + \
-    '\n\tResponse counts: {}'.format(status_code.most_common())+ '\n\tAvailability: {} %'.format(availability*100) + alertStr
+    '\n\tResponse counts: {}'.format(status_code.most_common())+ '\n\tAvailability: {:.2f} %'.format(availability*100) + '\n\n' +alertStr
 
         return True, printStr
 
     def checkAlerts(self, database_name):
-        '''Checks every 10seconds if we have some alert messages on the table "alerts_table" on our database'''
-        alert_thread = threading.Timer(10,self.checkAlerts,args=[database_name])
-        alert_thread.start()
+        '''Checks if we have some alert messages on the table "alerts_table" on our database'''
 
         query_result = select_values(database_name, "alerts_table", (self.URL,))
 
@@ -155,7 +152,7 @@ class Website():
             for element in query_result:
                 if element[4] == 'alert':
                     alertStr += '\n[ALERT MESSAGE !!] '+ 'The website {} is DOWN '.format(self.URL) + ' at {}'.format(element[1])+'\t Availability : {} %'.format(element[2]*100)
-                elif element[4] == 'recovery':
-                    alertStr += '\n[RECOVERY MESSAGE !!] '+ 'The website {} is RECOVERED '.format(self.URL) + ' at {}'.format(element[1]+'\t Availability : {} %'.format(element[2]*100))
+                if element[4] == 'recovery':
+                    alertStr += '\n[RECOVERY MESSAGE !!] '+ 'The website {} is RECOVERED '.format(self.URL) + ' at {}'.format(element[1])+'\t Availability : {} %'.format(element[2]*100)
             return alertStr
 
