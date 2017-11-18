@@ -162,10 +162,10 @@ def sub_menu1(monitor):
                     if( url_exist(URL) ):
                         break
                     else:
-                        print("\033[31m This URL doesn't exist or you have a bad connection, Try again :) \033[0m")
+                        print("\033[31m Sorry, This URL doesn't exist or you have a bad connection or the website is already down, Try again :) \033[0m")
                         continue
                 except:
-                    print("\033[31m This URL doesn't exist or you have a bad connection, Try again :) \033[0m")
+                    print("\033[31m Sorry, This URL doesn't exist or you have a bad connection or the website is already down, Try again :) \033[0m")
                     continue
 
             
