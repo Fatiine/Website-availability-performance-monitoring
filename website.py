@@ -7,6 +7,7 @@ import sqlite3
 from collections import  Counter
 import threading
 from database import create_tables, insert_values, select_values
+import re
 
 
 
@@ -22,8 +23,16 @@ class Website():
         self.checkInterval = checkInterval
         self.isDown = False
 
+    def normalize_url(self):
+        '''adds an http prefix if an url don't have it '''
+        if not re.match('^http[s]?://', self.URL):
+            self.URL = 'http://' + self.URL
+        return self.URL
+
+
     def checkAvailability(self):
         ''' Checks if the URL is alive '''
+        self.URL = self.normalize_url()
         try:
             response = requests.get(self.URL)
             status_code = response.status_code
