@@ -88,9 +88,12 @@ class Website():
         response_times = [element[4] for element in select_result if element[4] is not None]
 
         availability = availabilities[True] / sum(availabilities.values())
-        max_RT = max(response_times)
-        min_RT = min(response_times)
-        avg_RT = sum(response_times) / len(response_times)
+        max_RT = max(response_times , default=float('inf'))
+        min_RT = min(response_times , default=float('inf'))
+        try:
+            avg_RT = sum(response_times) / len(response_times)
+        except:
+            avg_RT = float('inf')
         time_date = datetime.datetime.now()
 
         # Saves on the table 'alerts_table' on our database if there is a detected alert and when it's recovered
