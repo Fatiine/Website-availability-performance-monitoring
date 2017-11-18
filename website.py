@@ -55,9 +55,9 @@ class Website():
         return current_datetime, availability , status_code , response_time
 
     def insert_website_check(self, database_name):
-        continousCheck = threading.Timer(self.checkInterval, self.insert_website_check, args=[database_name])
-        continousCheck.start()
         ''' Inserts the current data into the monitor database '''
+        insert_thread = threading.Timer(self.checkInterval, self.insert_website_check, args=[database_name])
+        insert_thread.start()
         # Current data
         time_date, availability , status_code , response_time = self.current_data()
         values = (self.URL, time_date, availability, status_code, response_time)
@@ -93,7 +93,8 @@ class Website():
         avg_RT = sum(response_times) / len(response_times)
         time_date = datetime.datetime.now()
 
-        # Save on the table 'alerts_table' on our database if there is a detected alert and when it's recovered
+        # Saves on the table 'alerts_table' on our database if there is a detected alert and when it's recovered
+        alertStr =''
         if timeframe == 120: # 2 minutes
             if availability < 0.8 and self.isDown == False:
             # When the availability of a website is < 0.8, then we should save on the data base an alert message
@@ -103,7 +104,10 @@ class Website():
                 values = (self.URL, time_date, availability, self.isDown, messageType)
                 insert_values(database_name, "alerts_table", values)
 
-            if availability >= 0.8 and self.isDown == True:
+                # Saving alert message on "alertStr"
+                alertStr = '\n[ALERT MESSAGE !!] '+ 'The website {} is DOWN '.format(self.URL) + ' at {}'.format(time_date)+'\t Availability : {} %'.format(availability*100)
+
+            elif availability >= 0.8 and self.isDown == True:
             # Once the availability is >= 0.8, we save on our database a recovery message
                 self.isDown = False
                 messageType = "recovery"
@@ -111,13 +115,15 @@ class Website():
                 values = (self.URL, time_date, availability, self.isDown, messageType)
                 insert_values(database_name, "alerts_table", values)
 
+                alertStr = '\n[RECOVERY MESSAGE !!] ' + 'The website {} is RECOVERED '.format(self.URL) + ' at {}'.format(time_date) + '\t Availability : {} %'.format(availability * 100)
+
         values = (self.URL, time_date, timeframe, availability, str(status_code.most_common()), max_RT, min_RT, avg_RT)
         insert_values(database_name, "stats_table", values)
 
 
         printStr = '\n Past {} minutes:'.format(timeframe/60) + \
     '\n\tMax/Avg/Min response time: {:.4f}/{:.4f}/{:.4f} s'.format(max_RT, avg_RT, min_RT) + \
-    '\n\tResponse counts: {}'.format(status_code.most_common())+ '\n\tAvailability: {} %'.format(availability*100)
+    '\n\tResponse counts: {}'.format(status_code.most_common())+ '\n\tAvailability: {} %'.format(availability*100) + alertStr
 
         return True, printStr
 
@@ -136,7 +142,7 @@ class Website():
             alertStr = ""
             for element in query_result:
                 if element[4] == 'alert':
-                    alertStr += '\n[ALERT MESSAGE !!] '+ 'The website {} is DOWN '.format(self.URL) + ' at {}'.format(element[1]+'\t Availability : {} %'.format(element[2]*100))
+                    alertStr += '\n[ALERT MESSAGE !!] '+ 'The website {} is DOWN '.format(self.URL) + ' at {}'.format(element[1])+'\t Availability : {} %'.format(element[2]*100)
                 elif element[4] == 'recovery':
                     alertStr += '\n[RECOVERY MESSAGE !!] '+ 'The website {} is RECOVERED '.format(self.URL) + ' at {}'.format(element[1]+'\t Availability : {} %'.format(element[2]*100))
             return alertStr
