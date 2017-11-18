@@ -83,3 +83,23 @@ def select_values(database_name, table, selectData):
         cursor.execute(sql_command, selectData)
 
     return cursor.fetchall()
+
+def drop_tables(database_name):
+    '''Drops the database tables alerts_table and monitoring_tables '''
+
+    # Database and cursor connection
+    connection = sqlite3.connect(database_name, timeout=10)
+    cursor = connection.cursor()
+
+    # Drop the table monitoring_table
+    cursor.execute("DROP TABLE IF EXISTS monitoring_table")
+
+    # Drop the table stats_table
+    cursor.execute("DROP TABLE IF EXISTS stats_table")
+
+    # Drop the table alerts_table
+    cursor.execute("DROP TABLE IF EXISTS alerts_table")
+
+    # Save changes before closing
+    connection.commit()
+    connection.close()
