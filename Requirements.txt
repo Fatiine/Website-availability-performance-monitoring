@@ -9,6 +9,6 @@ os
 re
 flask
 multiprocessing
-
+termcolor
 
 
