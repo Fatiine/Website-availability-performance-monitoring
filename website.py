@@ -107,8 +107,6 @@ class Website():
             avg_RT = float('inf')
         time_date = datetime.datetime.now()
 
-        if availability == 0:
-            return False , "\n No available data "
 
         # Saves on the table 'alerts_table' on our database if there is a detected alert and when it's recovered
         alertStr =''
