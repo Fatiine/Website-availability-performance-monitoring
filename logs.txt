@@ -1,0 +1,280 @@
+The idea is to create a mock server at "http://localhost:2000" and test the alert system
+Creating the monitor...  
+ adding "http://localhost:2000" and a check interval (2 seconds ) to its websites list... 
+Running the monitor before starting the server... 
+Computing first stats, and checking if there are any alerts ... 
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: inf/inf/inf s
+	Response counts: [(None, 1)]
+	Availability: 0.00 %
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+ Past 10.0 minutes:
+	Max/Avg/Min response time: inf/inf/inf s
+	Response counts: [(None, 1)]
+	Availability: 0.00 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+As expected, As the server is already DOWN, the program sends an alert message ! 
+Starting the server...
+Computing stats every 10 seconds, and checking if there are any alerts messages ... 
+First calculations ...
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0044/0.0032 s
+	Response counts: [(200, 5), (None, 1)]
+	Availability: 83.33 %
+
+
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0044/0.0032 s
+	Response counts: [(200, 5), (None, 1)]
+	Availability: 83.33 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+Second calculations ...
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0038/0.0015 s
+	Response counts: [(200, 10), (None, 1)]
+	Availability: 90.91 %
+
+
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0038/0.0015 s
+	Response counts: [(200, 10), (None, 1)]
+	Availability: 90.91 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+Third calculations ...
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0037/0.0015 s
+	Response counts: [(200, 15), (None, 1)]
+	Availability: 93.75 %
+
+
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0037/0.0015 s
+	Response counts: [(200, 15), (None, 1)]
+	Availability: 93.75 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+Fourth calculations ...
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0035/0.0015 s
+	Response counts: [(200, 20), (None, 1)]
+	Availability: 95.24 %
+
+
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0035/0.0015 s
+	Response counts: [(200, 20), (None, 1)]
+	Availability: 95.24 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+When the server starts, and the availability becomes >= 0.8, the alerting system sends a recovery message. At the same time it prints also the previous alert messages 
+Shutting down the server again...
+Computing stats after 1 second, and checking if there are any alerts or recovery messages ... 
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0035/0.0015 s
+	Response counts: [(200, 20), (None, 1)]
+	Availability: 95.24 %
+
+
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0035/0.0015 s
+	Response counts: [(200, 20), (None, 1)]
+	Availability: 95.24 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+Computing stats after 10 seconds, and checking if there are any alerts or recovery messages ... 
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0035/0.0015 s
+	Response counts: [(200, 20), (None, 6)]
+	Availability: 76.92 %
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:55	 Availability : 76.92 %
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0056/0.0035/0.0015 s
+	Response counts: [(200, 20), (None, 6)]
+	Availability: 76.92 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:55	 Availability : 76.92 %
+It the availability becomes < 0.8, the alerting system sends an alert message. 
+ It prints also the previous alert and recovery messages 
+Re-starting the server...
+Computing stats after 1 second, and checking if there are any alerts or recovery messages ... 
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0036/0.0015 s
+	Response counts: [(200, 21), (None, 6)]
+	Availability: 77.78 %
+
+
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0036/0.0015 s
+	Response counts: [(200, 21), (None, 6)]
+	Availability: 77.78 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:55	 Availability : 76.92 %
+Computing stats after 10 seconds, and checking if there are any alerts or recovery messages ... 
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0037/0.0015 s
+	Response counts: [(200, 26), (None, 6)]
+	Availability: 81.25 %
+
+
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:25:06	 Availability : 81.25 %
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0037/0.0015 s
+	Response counts: [(200, 26), (None, 6)]
+	Availability: 81.25 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:55	 Availability : 76.92 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:25:06	 Availability : 81.25 %
+Computing stats after 10 seconds, and checking if there are any alerts or recovery messages ... 
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0037/0.0015 s
+	Response counts: [(200, 31), (None, 6)]
+	Availability: 83.78 %
+
+
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0037/0.0015 s
+	Response counts: [(200, 31), (None, 6)]
+	Availability: 83.78 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:55	 Availability : 76.92 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:25:06	 Availability : 81.25 %
+Computing stats after 10 seconds, and checking if there are any alerts or recovery messages ... 
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0036/0.0015 s
+	Response counts: [(200, 36), (None, 6)]
+	Availability: 85.71 %
+
+
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0036/0.0015 s
+	Response counts: [(200, 36), (None, 6)]
+	Availability: 85.71 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:55	 Availability : 76.92 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:25:06	 Availability : 81.25 %
+Computing stats after 10 seconds, and checking if there are any alerts or recovery messages ... 
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0034/0.0015 s
+	Response counts: [(200, 41), (None, 6)]
+	Availability: 87.23 %
+
+
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0034/0.0015 s
+	Response counts: [(200, 41), (None, 6)]
+	Availability: 87.23 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:55	 Availability : 76.92 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:25:06	 Availability : 81.25 %
+Computing stats after 10 seconds, and checking if there are any alerts or recovery messages ... 
+
+
+ ######### Statistiques of the website http://localhost:2000 #########
+ Past 2.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0034/0.0015 s
+	Response counts: [(200, 46), (None, 6)]
+	Availability: 88.46 %
+
+
+ Past 10.0 minutes:
+	Max/Avg/Min response time: 0.0057/0.0034/0.0015 s
+	Response counts: [(200, 46), (None, 6)]
+	Availability: 88.46 %
+
+
+
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:04	 Availability : 0.00 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:24:14	 Availability : 83.33 %
+[ALERT MESSAGE !!] The website http://localhost:2000 is DOWN  at 2017-11-19 21:24:55	 Availability : 76.92 %
+[RECOVERY MESSAGE !!] The website http://localhost:2000 is RECOVERED  at 2017-11-19 21:25:06	 Availability : 81.25 %
+It the availability becomes >= 0.8, the alerting system sends a recovery message. 
+ It keeps always the previous alert and recovery messages (For historical reasons ;) 
+Shutting down the server ...
+A database "test.db" is created and it saves all the ALERT and RECOVERY messages
+End of the test
+
