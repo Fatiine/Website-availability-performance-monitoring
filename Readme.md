@@ -70,7 +70,8 @@ I re-started the server again and launched the stats computation and alerts chec
 
 
 ## How the application can be improved : 
-- Verify if the URL the user has defined exists, which means if it has an existing DNS adress. ( So to defferentiate between non-existing URL and servers that are already DOWN at the moment the user define its URL). 
+- Verify if the URL the user has defined exists, which means if it has an existing DNS adress. ( So to defferentiate between non-existing URL and servers that are already DOWN at the moment the user define its URL).
+- For displaying the data, I used the module "curses" and created 2 windows. It would be great if I can create scrollable windows. 
 - Implementation of Background workers or Asynchronous tasks that can compute the stats asynchronouly. This will make sure that the calculation are done the moment they are needed to be done without any delays.
 - Add some statistical calculations that will help in the troubleshooting process of a low availability website for example and will alert of a risk of a statistical high chance of a website going down during a period of time.
 - Instead of using several timeframes(2, 10 and 60 minutes), we can make a UI that displays a graph stating the in-real-time variations of the stats;
