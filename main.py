@@ -6,6 +6,7 @@ from database import create_tables
 import time
 import threading
 import re 
+from test import test_alert_logic
 
 
 
@@ -129,6 +130,7 @@ def menu(monitor):
 
         elif choice == "2":
             print("Run the test")
+            test_alert_logic()
 
         elif choice == "3":
             os._exit(0)
