@@ -55,7 +55,7 @@ class Monitor():
             if stats60m_bool and hourDisplay:
                 printStr += stats60m_data
             if not (stats2m_bool and stats10m_bool and (not hourDisplay or stats60m_bool)):
-                printStr += "\nNo data available !! "
+                printStr += "\n \t No available data !! "
 
         return printStr
 

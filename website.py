@@ -90,8 +90,8 @@ class Website():
         select_result = select_values(database_name, "monitoring_table", selectData)
 
         # it there is no data on the selection result, then we can't compute the statistiques
-        if select_result is None:
-            return False, "No data available"
+        if len(select_result) <= 0:
+            return False, "\n No available data "
 
         # if the selection result is not null, we compute the statistiques of the element we select
         availabilities = Counter([element[0] for element in select_result if element[0] is not None])
@@ -106,6 +106,9 @@ class Website():
         except:
             avg_RT = float('inf')
         time_date = datetime.datetime.now()
+
+        if availability == 0:
+            return False , "\n No available data "
 
         # Saves on the table 'alerts_table' on our database if there is a detected alert and when it's recovered
         alertStr =''
@@ -131,6 +134,8 @@ class Website():
 
                 alertStr = '\n[RECOVERY MESSAGE !!] ' + 'The website {} is RECOVERED '.format(self.URL) + ' at {}'.format(time_date.strftime("%Y-%m-%d %H:%M:%S")) + '\t Availability : {:.2f} %'.format(availability * 100)
 
+        
+
 
         printStr = '\n Past {} minutes:'.format(timeframe/60) + \
     '\n\tMax/Avg/Min response time: {:.4f}/{:.4f}/{:.4f} s'.format(max_RT, avg_RT, min_RT) + \
@@ -151,8 +156,8 @@ class Website():
             alertStr = ""
             for element in query_result:
                 if element[4] == 'alert':
-                    alertStr += '\n[ALERT MESSAGE !!] '+ 'The website {} is DOWN '.format(self.URL) + ' at {}'.format(element[1])+'\t Availability : {} %'.format(element[2]*100)
+                    alertStr += '\n[ALERT MESSAGE !!] '+ 'The website {} is DOWN '.format(self.URL) + ' at {}'.format(element[1])+'\t Availability : {:.2f} %'.format(element[2]*100)
                 if element[4] == 'recovery':
-                    alertStr += '\n[RECOVERY MESSAGE !!] '+ 'The website {} is RECOVERED '.format(self.URL) + ' at {}'.format(element[1])+'\t Availability : {} %'.format(element[2]*100)
+                    alertStr += '\n[RECOVERY MESSAGE !!] '+ 'The website {} is RECOVERED '.format(self.URL) + ' at {}'.format(element[1])+'\t Availability : {:.2f} %'.format(element[2]*100)
             return alertStr
 
