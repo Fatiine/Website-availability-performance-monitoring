@@ -172,7 +172,7 @@ def sub_menu1(monitor):
             
             while True:
                 try:
-                    CheckInterval = float(input("Set The website check interval : "))
+                    CheckInterval = float(input("Set The website check interval (in seconds) : "))
                 except ValueError:
                     print("That's not an int!")
                     continue
