@@ -14,11 +14,6 @@ app = Flask(__name__)
 def hello_world():
     return 'Hello, World!'
 
-def display_test_loop(monitor,n):
-    for i in range(5):
-        displayConsole(10,monitor.hourlyDisplay,monitor)
-        time.sleep(10)
-
 def test_alert_logic():
     os.system('clear')
     ''' tests the alerting logic using a mock server '''
