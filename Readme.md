@@ -2,7 +2,7 @@
 
 ## About the console program 
 This console program allows the user to monitor the performance and the availability of a website.
-It starts with a simple menu that asks the user to enter the websites he wants to monitor and the appropriate check intervals. 
+It starts with a simple menu that asks the user to enter the websites he wants to monitor and the appropriate check intervals ( in seconds ). 
 There is a possibility to delete or add a website on the list of websites the monitor checks.
 The results appear in two columns, one dedicated for statistics, and the other for alerts.
 When the user is asked to enter the website's url, the program checks if that URL verify the http url format. If not it asks them to try again. It does the same thing with the check Interval.
@@ -22,7 +22,7 @@ The console program created is composed of 2 key classes :
         - checkAvailability() : Checks if the URL is Alive and return a boolean (True: is Alive, False : isn't alive ) and the response of the GET request we send
         - current_data() : Gets the website data ( availability , response time and status code ) at the current time, and returns those data 
         - insert_website_check(database_name): Inserts the current data into the monitor database 
-        - get_stats(timeframe, database_name) : Gets the statistiques of the website over the timeframe defined
+        - get_stats(timeframe, database_name) : Gets the statistics of the website over the timeframe defined
         - checkAlerts(database_name) : Checks if we have some alert messages on the table "alerts_table" on our database
 - Monitor (monitor.py) : 
     Attributes : 
@@ -56,17 +56,19 @@ Then follow the instructions.
 
 
 ## Requirements:
+This program works properly on the environment Linux.
 To run this program, you need to have python3 and pip3.
-Then you need to install the libraries or modules :( curses, threading, sqlite3, requests, datetime, time, sys, os, re , logging, multiprocessing, flask) using the command : 
-     sudo pip install [module_name]
+Then you need to install the modules :( requests, datetime, flask, multiprocessing, termcolor) using the command : 
+      " sudo pip install [module_name] "  Or    " sudo pip install -r Requirements.txt "
 
 
 ## Test:
 For the test, I created a mock-server (local server ) that responds to GET requests. 
-Before starting the server, I created a monitor and compute the first stats. As the server is already down, an ALERT message appears.
-I started the server for a while, computed some statistiques. As the availability became >= 0.8, the program sends a RECOVERY message.
-I shutted the server down, computed some statistiques. And again, when the availability became less than 0.8, the program sent an ALERT message. The program keeps printing the previous ALERT and RECOVERY messages. 
+Before starting the server, I created a monitor and computed the first stats. As the server is already down, an ALERT message appears.
+I started the server for a while, computed some statistics. As the availability became >= 0.8, the program sends a RECOVERY message.
+I shutted the server down, computed some statistics. And again, when the availability became less than 0.8, the program sent an ALERT message. The program keeps printing the previous ALERT and RECOVERY messages. 
 I re-started the server again and launched the stats computation and alerts checking before shutting it down for the last time.
+The logs.txt file is the expected logs we should see when we launch the test.
 
 
 ## How the application can be improved : 
