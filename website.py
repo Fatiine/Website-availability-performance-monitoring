@@ -42,7 +42,7 @@ class Website():
                 return True, response
             else :
                 #print("The website : ", self.URL, "is DOWN")
-                # self.isDown = True
+                self.isDown = True
                 return False, response
 
         # Exceptions
