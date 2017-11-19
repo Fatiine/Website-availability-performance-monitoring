@@ -27,9 +27,4 @@
 
 
 
-## Usage
-
-# Installing packaging
-pip install -r requirements.txt
-
 
