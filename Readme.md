@@ -2,11 +2,11 @@
 
 ## About the console program 
 This console program allows the user to monitor the performance and the availability of a website.
-It started with a simple menu that asks the user to enter the websites he wants to monitor and the appropriate check intervals. 
+It starts with a simple menu that asks the user to enter the websites he wants to monitor and the appropriate check intervals. 
 There is a possibility to delete or add a website on the list of websites the monitor checks.
 The results appear in two columns, one dedicated for statistics, and the other for alerts.
-When the user is asked to enter the website's url, we check if that URL verify the http url format. If not we ask them to try again. We do the same thing with the check Interval.
-When we start to run the program, a sqlite database is created. We store on a table called "monitoring_table" the metrics of each website in their appropriate check Intervals.
+When the user is asked to enter the website's url, the program checks if that URL verify the http url format. If not it asks them to try again. It does the same thing with the check Interval.
+When start to run the program, a sqlite database is created. We store on a table called "monitoring_table" the metrics of each website in their appropriate check Intervals.
 We store also on a table called "alerts_table" the alert and recovery messages. The user can open this database to see the history of alert messages.
 
 
@@ -49,6 +49,7 @@ and :
         File where the menu and display functions are defined.
 
 ## Usage : 
+This program works on the linux environment.
 On a terminal, run the command : 
         python3 main.py 
 Then follow the instructions.
@@ -57,15 +58,19 @@ Then follow the instructions.
 ## Requirements:
 To run this program, you need to have python3 and pip3.
 Then you need to install the libraries or modules :( curses, threading, sqlite3, requests, datetime, time, sys, os, re , logging, multiprocessing, flask) using the command : 
->> sudo pip install [module_name]
+     sudo pip install [module_name]
 
 
 ## Test:
-For the test, I created a mock-server (local server ) that responds to GET requests. I started the server for a while then I shutted it down re-started it again before shutting it down for the last time. At each step I calculate the statistiques and print them and launch the alerts tests.
+For the test, I created a mock-server (local server ) that responds to GET requests. 
+Before starting the server, I created a monitor and compute the first stats. As the server is already down, an ALERT message appears.
+I started the server for a while, computed some statistiques. As the availability became >= 0.8, the program sends a RECOVERY message.
+I shutted the server down, computed some statistiques. And again, when the availability became less than 0.8, the program sent an ALERT message. The program keeps printing the previous ALERT and RECOVERY messages. 
+I re-started the server again and launched the stats computation and alerts checking before shutting it down for the last time.
 
 
 ## How the application can be improved : 
-- Verify if the URL the user has defined exists, which means if it has an existing DNS adress. 
+- Verify if the URL the user has defined exists, which means if it has an existing DNS adress. ( So to defferentiate between non-existing URL and servers that are already DOWN at the moment the user define its URL). 
 - Implementation of Background workers or Asynchronous tasks that can compute the stats asynchronouly. This will make sure that the calculation are done the moment they are needed to be done without any delays.
 - Add some statistical calculations that will help in the troubleshooting process of a low availability website for example and will alert of a risk of a statistical high chance of a website going down during a period of time.
 - Instead of using several timeframes(2, 10 and 60 minutes), we can make a UI that displays a graph stating the in-real-time variations of the stats;
