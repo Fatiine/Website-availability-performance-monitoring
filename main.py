@@ -6,7 +6,6 @@ from database import create_tables
 import time
 import threading
 import re 
-from urllib.request import urlopen
 
 
 
@@ -105,16 +104,14 @@ def normalize_url(url):
     '''adds an http prefix if an url don't have it '''
     if not re.match('^http[s]?://', url):
         url = 'http://' + url
-    return url        
+    return url     
 
-def url_exist(url):
-    '''Tests if a user defined url exists '''
-    url = normalize_url(url)
-    code = urlopen(url).code
-    if (code / 100 >= 4):
-        return False
-    else: 
+def is_http_url(s):
+    '''Returns true if s is valid http url, else false '''
+    if re.match('https?://(?:www)?(?:[\w-]{2,255}(?:\.\w{2,6}){1,2})(?:/[\w&%?#-]{1,300})?',s):
         return True
+    else:
+        return False   
 
 def menu(monitor):
     ''' Asks the user to define the website URL and CheckInterval  '''
@@ -160,13 +157,14 @@ def sub_menu1(monitor):
             while True:
                 try:
                     URL = input("Set the website URL \n (format examples : google.fr or http://google.fr) : ")
-                    if( url_exist(URL) ):
+                    URL = normalize_url(URL)
+                    if( is_http_url(URL) ):
                         break
                     else:
-                        print("\033[31m Sorry, This URL doesn't exist or you have a bad connection or the website is already down, Try again :) \033[0m")
+                        print("\033[31m Sorry, This is not a valid http url, Try again :) \033[0m")
                         continue
                 except:
-                    print("\033[31m Sorry, This URL doesn't exist or you have a bad connection or the website is already down, Try again :) \033[0m")
+                    print("\033[31m Sorry, This is not a valid http url, Try again :) \033[0m")
                     continue
 
             
