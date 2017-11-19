@@ -61,7 +61,7 @@ Then you need to install the libraries or modules :( curses, threading, sqlite3,
 
 
 ## Test:
-For the test, I created a mock-server (local server ) that responds to GET requests. I started the server, then I shut it down and re-start it again to test the alert logic.
+For the test, I created a mock-server (local server ) that responds to GET requests. I started the server for a while then I shutted it down re-started it again before shutting it down for the last time. At each step I calculate the statistiques and print them and launch the alerts tests.
 
 
 ## How the application can be improved : 
