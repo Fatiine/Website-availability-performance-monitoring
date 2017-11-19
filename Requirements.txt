@@ -1,12 +1,5 @@
-curses
-threading
-sqlite3
 requests
 datetime
-time
-sys
-os
-re
 flask
 multiprocessing
 termcolor
